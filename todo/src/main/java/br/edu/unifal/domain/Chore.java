@@ -15,7 +15,7 @@ public class Chore {
 
     private Boolean isCompleted;
 
-    private LocalDate desline;
+    private LocalDate deadline;
 
 
 }
