@@ -1,9 +1,7 @@
 package br.edu.unifal.service;
 
 import br.edu.unifal.domain.Chore;
-import br.edu.unifal.excepition.DuplicatedChoreException;
-import br.edu.unifal.excepition.InvalidDeadlineException;
-import br.edu.unifal.excepition.InvalidDescriptionException;
+import br.edu.unifal.excepition.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -59,7 +57,6 @@ public class ChoreServiceTest {
                 () -> service.addChore("Description", LocalDate.now()));
     }
 
-    // TODO: 1. Teste ao adicionar uma única chore
     @Test
     @DisplayName("#addChore > When the chore is successfully added > Return true")
     void addChoreWhenTheChoreIsSuccessfullyAddedReturnTrue(){
@@ -67,7 +64,6 @@ public class ChoreServiceTest {
         assertTrue(service.isChoreOnList(chore));
     }
 
-    // TODO: 2. Teste ao adicionar mais de uma chore (sem repetição)
     @Test
     @DisplayName("#addChore > When chores are different > Return true")
     void addChoreWhenChoresAreDifferentReturnTrue(){
@@ -81,6 +77,31 @@ public class ChoreServiceTest {
 
     }
 
+    @Test
+    @DisplayName("#deleteChore > When the list is empty > Throw an exception")
+    void deleteChoreWhenTheListIsEmptyThrowAnException(){
+        assertThrows(EmptyChoreListException.class,() -> {
+            service.deleteChore("Description", LocalDate.now());
+        });
+    }
 
+    @Test
+    @DisplayName("#deleteChore > When the list is not empty > When the chore does not exist > Throw an exception")
+    void deleteChoreWhenTheListIsNotEmptyWhenTheChoreDoesNotExistThrowAnException() {
+        service.addChore("Description", LocalDate.now());
+        assertThrows(ChoreNotFoundException.class, () -> {
+            service.deleteChore("Chore to be deleted", LocalDate.now().plusDays(2));
+        });
+    }
+
+    @Test
+    @DisplayName("#deleteChore > When the list is not empty > When the chore exists > Delete the chore")
+    void deleteChoreWhenTheListIsNotEmptyWhenTheChoreExistsDeleteTheChore() {
+        service.addChore("Description", LocalDate.now().plusDays(5));
+        assertEquals(1, service.getChores().size());
+
+        assertDoesNotThrow(() -> service.deleteChore("Description", LocalDate.now().plusDays(5)));
+        assertEquals(0, service.getChores().size());
+    }
 
 }
