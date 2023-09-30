@@ -115,6 +115,31 @@ public class ChoreService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     *
+     * Method to toggle a chore from completed to uncompleted and vice-versa
+     * @param description The chore's description
+     * @param deadline The deadline to complete the chore
+     * @throws ChoreNotFoundException When the chore is not found on the list
+     */
+    public void toggleChore(String description, LocalDate deadline){
+        boolean isChoreExist = this.chores.stream().anyMatch((chore) ->
+                chore.getDescription().equals(description) &&
+                chore.getDeadline().isEqual(deadline));
+        if(!isChoreExist){
+            throw new ChoreNotFoundException("Chore not found. Impossible to toggle!");
+        }
+        this.chores.stream().map(chore-> {
+            if(!chore.getDescription().equals(description) && !chore.getDeadline().isEqual(deadline)){
+                return chore;
+            }
+            if(chore.getDeadline().isBefore(LocalDate.now()) && chore.getIsCompleted()){
+                throw new ToggleChoreWithInvalidDeadlineException("Unable to toggle a completed chore with a past deadline");
+            }
+            chore.setIsCompleted(!chore.getIsCompleted());
+            return chore;
+        }).collect(Collectors.toList());
+    }
     private final Predicate<List<Chore>> isChoreListEmpty = choreList -> choreList.isEmpty();
 
 }
