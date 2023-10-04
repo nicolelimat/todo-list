@@ -143,7 +143,15 @@ public class ChoreService {
     }
 
     public List<Chore> filterChores(ChoreFilter filter) {
-        return null;
+        switch (filter){
+            case COMPLETED:
+                return this.chores.stream().filter(Chore::getIsCompleted).collect(Collectors.toList());
+            case UNCOMPLETED:
+                return this.chores.stream().filter(chore -> !chore.getIsCompleted()).collect(Collectors.toList());
+            case ALL:
+            default:
+                return this.chores;
+        }
     }
     private final Predicate<List<Chore>> isChoreListEmpty = choreList -> choreList.isEmpty();
 
