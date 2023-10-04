@@ -72,19 +72,19 @@ public class ChoreService {
         return chore;
     }
 
-    /**
-     * Method to verify if a chore is on the list.
-     * @param chore The chore given
-     * @return false if the chore is on the list, true if not
-     */
-    boolean isChoreOnList(Chore chore){
-        for(Chore x : chores){
-            if (chore.getDescription().equals(x.getDescription()) && chore.getDeadline().isEqual(x.getDeadline())) {
-                return true;
-            }
-        }
-        return false;
-    }
+//    /**
+//     * Method to verify if a chore is on the list.
+//     * @param chore The chore given
+//     * @return false if the chore is on the list, true if not
+//     */
+//    boolean isChoreOnList(Chore chore){
+//        for(Chore x : chores){
+//            if (chore.getDescription().equals(x.getDescription()) && chore.getDeadline().isEqual(x.getDeadline())) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
     /**
      * Get the added chores.

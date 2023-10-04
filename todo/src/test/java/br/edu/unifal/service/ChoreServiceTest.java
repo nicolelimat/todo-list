@@ -59,25 +59,52 @@ public class ChoreServiceTest {
                 () -> service.addChore("Description", LocalDate.now()));
     }
 
-    @Test
-    @DisplayName("#addChore > When the chore is successfully added > Return true")
-    void addChoreWhenTheChoreIsSuccessfullyAddedReturnTrue() {
-        Chore chore = service.addChore("Description", LocalDate.now());
-        assertTrue(service.isChoreOnList(chore));
-    }
+//    @Test
+//    @DisplayName("#addChore > When the chore is successfully added > Return true")
+//    void addChoreWhenTheChoreIsSuccessfullyAddedReturnTrue() {
+//        Chore chore = service.addChore("Description", LocalDate.now());
+//        assertTrue(service.isChoreOnList(chore));
+//    }
 
     @Test
-    @DisplayName("#addChore > When chores are different > Return true")
-    void addChoreWhenChoresAreDifferentReturnTrue() {
-        Chore chore1 = service.addChore("Description 1", LocalDate.now());
-        Chore chore2 = service.addChore("Description 2", LocalDate.now());
-
+    @DisplayName("#addChore > When the chore's list is empty > When adding a new chore > Add the chore")
+    void addChoreWhenTheChoresListIsEmptyWhenAddingANewChoreAddTheChore() {
+        Chore response = service.addChore("Description", LocalDate.now());
         assertAll(
-                () -> assertTrue(service.isChoreOnList(chore1)),
-                () -> assertTrue(service.isChoreOnList(chore2))
+                () -> assertEquals("Description", response.getDescription()),
+                () -> assertEquals(LocalDate.now(), response.getDeadline()),
+                () -> assertEquals(Boolean.FALSE, response.getIsCompleted())
         );
-
     }
+
+    @Test
+    @DisplayName("#addChore > When the chore's list has at least one element > When adding a new chore > Add the chore")
+    void addChoreWhenTheChoresListHasAtLeastOneElementWhenAddingANewChoreAddTheChore() {
+        service.addChore("Chore #01", LocalDate.now());
+        service.addChore("Chore #02", LocalDate.now().plusDays(2));
+        assertAll(
+                () -> assertEquals(2, service.getChores().size()),
+                () -> assertEquals("Chore #01", service.getChores().get(0).getDescription()),
+                () -> assertEquals(LocalDate.now(), service.getChores().get(0).getDeadline()),
+                () -> assertEquals(Boolean.FALSE, service.getChores().get(0).getIsCompleted()),
+                () -> assertEquals("Chore #02", service.getChores().get(1).getDescription()),
+                () -> assertEquals(LocalDate.now().plusDays(2), service.getChores().get(1).getDeadline()),
+                () -> assertEquals(Boolean.FALSE, service.getChores().get(1).getIsCompleted())
+        );
+    }
+
+//    @Test
+//    @DisplayName("#addChore > When chores are different > Return true")
+//    void addChoreWhenChoresAreDifferentReturnTrue() {
+//        Chore chore1 = service.addChore("Description 1", LocalDate.now());
+//        Chore chore2 = service.addChore("Description 2", LocalDate.now());
+//
+//        assertAll(
+//                () -> assertTrue(service.isChoreOnList(chore1)),
+//                () -> assertTrue(service.isChoreOnList(chore2))
+//        );
+//
+//    }
 
     @Test
     @DisplayName("#deleteChore > When the list is empty > Throw an exception")
