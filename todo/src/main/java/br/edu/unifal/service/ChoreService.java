@@ -166,6 +166,11 @@ public class ChoreService {
                         (chore.getIsCompleted() ? "Completa" : "Incompleta"))
         );
     }
+
+    public Chore editChore(String oldDescription, LocalDate oldDeadline, String newDescription, LocalDate newDeadline){
+        return null;
+    }
+
 }
 
 
