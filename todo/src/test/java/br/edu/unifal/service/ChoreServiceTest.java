@@ -251,13 +251,13 @@ public class ChoreServiceTest {
     }
 
     @Test
-    @DisplayName("displayChores > When the list is empty > Throw an exception")
+    @DisplayName("#displayChores > When the list is empty > Throw an exception")
     void displayChoresWhenTheListEmptyThrowAnException(){
         assertThrows(EmptyChoreListException.class, () -> service.displayChores());
     }
 
     @Test
-    @DisplayName("displayChores > When the list is not empty > When the status is TRUE > Display the chores")
+    @DisplayName("#displayChores > When the list is not empty > When the status is TRUE > Display the chores")
     void displayChoresWhenTheListIsNotEmptyWhenTheStatusIsTrueDisplayChores(){
         service.getChores().add(new Chore("Chore #01", Boolean.TRUE, LocalDate.now().minusDays(5)));
         service.getChores().add(new Chore("Chore #02", Boolean.TRUE, LocalDate.now().plusDays(9) ));
@@ -267,7 +267,7 @@ public class ChoreServiceTest {
     }
 
     @Test
-    @DisplayName("displayChores > When the list is not empty > When the status is FALSE > Display the chores")
+    @DisplayName("#displayChores > When the list is not empty > When the status is FALSE > Display the chores")
     void displayChoresWhenTheListIsNotEmptyWhenTheStatusIsFalseDisplayChores(){
         service.getChores().add(new Chore("Chore #01", Boolean.FALSE, LocalDate.now().minusDays(5)));
         service.getChores().add(new Chore("Chore #02", Boolean.FALSE, LocalDate.now().plusDays(9) ));
