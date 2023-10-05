@@ -6,10 +6,7 @@ import br.edu.unifal.excepition.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.w3c.dom.ls.LSOutput;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -247,7 +244,6 @@ public class ChoreServiceTest {
                 () -> assertEquals("Chore #01", response.get(0).getDescription()),
                 () -> assertEquals(Boolean.FALSE, response.get(0).getIsCompleted())
         );
-
     }
 
     @Test
@@ -298,7 +294,8 @@ public class ChoreServiceTest {
     @Test
     @DisplayName("#editChore > When the chore doesn't exist > Throw an Exception")
     void editChoreWhenTheChoreDoesNotExistThrowAnException(){
-        assertThrows(ChoreNotFoundException.class, () -> service.editChore("Chore to be edited", LocalDate.now(), "New description", LocalDate.now()));
+        service.getChores().add(new Chore("I exist!", Boolean.FALSE, LocalDate.now()));
+        assertThrows(ChoreNotFoundException.class, () -> service.editChore("I don't exist :(", LocalDate.now(), "New description", LocalDate.now()));
     }
 
     @Test
@@ -352,10 +349,10 @@ public class ChoreServiceTest {
         assertFalse(service.getChores().get(0).getIsCompleted());
 
         service.getChores().add(new Chore("Chore #02", Boolean.TRUE, LocalDate.now()));
-        assertTrue(service.getChores().get(0).getIsCompleted());
+        assertTrue(service.getChores().get(1).getIsCompleted());
 
-        assertDoesNotThrow( () -> service.editChore("Chore #01", LocalDate.now(), "Chore #01", LocalDate.now()));
-        assertTrue(service.getChores().get(0).getIsCompleted());
+        assertDoesNotThrow( () -> service.editChore("Chore #02", LocalDate.now(), "Chore #02", LocalDate.now()));
+        assertTrue(service.getChores().get(1).getIsCompleted());
     }
 
     @Test
@@ -398,15 +395,15 @@ public class ChoreServiceTest {
     @DisplayName("#editChore > When editing more than one chore > Edit the chores")
     void editChoreWhenChoreEditedUpdateChoreInTheList(){
         service.getChores().add(new Chore("Old description #01", Boolean.FALSE, LocalDate.now()));
-        service.getChores().add(new Chore("Old description #02", Boolean.FALSE, LocalDate.now()));
-        service.getChores().add(new Chore("Old description #03", Boolean.FALSE, LocalDate.now()));
+        service.getChores().add(new Chore("Old description #02", Boolean.FALSE, LocalDate.now().plusDays(1)));
+        service.getChores().add(new Chore("Old description #03", Boolean.FALSE, LocalDate.now().plusDays(2)));
 
-        assertDoesNotThrow( () -> service.editChore("Old description #01", LocalDate.now(), "New description", LocalDate.now().plusDays(5)));
-        assertDoesNotThrow( () -> service.editChore("Old description #02", LocalDate.now(), "Old description #02", LocalDate.now().plusDays(5)));
-        assertDoesNotThrow( () -> service.editChore("Old description #02", LocalDate.now(), "New description", LocalDate.now()));
+        assertDoesNotThrow( () -> service.editChore("Old description #01", LocalDate.now(), "New description", LocalDate.now().plusDays(6)));
+        assertDoesNotThrow( () -> service.editChore("Old description #02", LocalDate.now().plusDays(1), "Old description #02", LocalDate.now().plusDays(5)));
+        assertDoesNotThrow( () -> service.editChore("Old description #03", LocalDate.now().plusDays(2), "New description", LocalDate.now().plusDays(2)));
 
         assertAll(
-                () -> assertEquals(LocalDate.now().plusDays(5), service.getChores().get(0).getDeadline()),
+                () -> assertEquals(LocalDate.now().plusDays(6), service.getChores().get(0).getDeadline()),
                 () -> assertEquals("New description", service.getChores().get(0).getDescription()),
                 () -> assertEquals(3, service.getChores().size()),
 
@@ -414,7 +411,7 @@ public class ChoreServiceTest {
                 () -> assertEquals("Old description #02", service.getChores().get(1).getDescription()),
                 () -> assertEquals(3, service.getChores().size()),
 
-                () -> assertEquals(LocalDate.now(), service.getChores().get(2).getDeadline()),
+                () -> assertEquals(LocalDate.now().plusDays(2), service.getChores().get(2).getDeadline()),
                 () -> assertEquals("New description", service.getChores().get(2).getDescription()),
                 () -> assertEquals(3, service.getChores().size())
         );
