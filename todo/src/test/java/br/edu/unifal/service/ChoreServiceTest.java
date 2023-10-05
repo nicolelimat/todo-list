@@ -6,7 +6,10 @@ import br.edu.unifal.excepition.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.w3c.dom.ls.LSOutput;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -246,5 +249,44 @@ public class ChoreServiceTest {
         );
 
     }
+
+    @Test
+    @DisplayName("displayChores > When the list is empty > Throw an exception")
+    void displayChoresWhenTheListEmptyThrowAnException(){
+        assertThrows(EmptyChoreListException.class, () -> service.displayChores());
+    }
+
+    @Test
+    @DisplayName("displayChores > When the list is not empty > When the status is TRUE > Display the chores")
+    void displayChoresWhenTheListIsNotEmptyWhenTheStatusIsTrueDisplayChores(){
+        service.getChores().add(new Chore("Chore #01", Boolean.TRUE, LocalDate.now().minusDays(5)));
+        service.getChores().add(new Chore("Chore #02", Boolean.TRUE, LocalDate.now().plusDays(9) ));
+        service.getChores().add(new Chore("Chore #03", Boolean.TRUE, LocalDate.now() ));
+
+        assertDoesNotThrow(() -> service.displayChores());
+    }
+
+    @Test
+    @DisplayName("displayChores > When the list is not empty > When the status is FALSE > Display the chores")
+    void displayChoresWhenTheListIsNotEmptyWhenTheStatusIsFalseDisplayChores(){
+        service.getChores().add(new Chore("Chore #01", Boolean.FALSE, LocalDate.now().minusDays(5)));
+        service.getChores().add(new Chore("Chore #02", Boolean.FALSE, LocalDate.now().plusDays(9) ));
+        service.getChores().add(new Chore("Chore #03", Boolean.FALSE, LocalDate.now() ));
+
+        assertDoesNotThrow(() -> service.displayChores());
+    }
+
+//    @Test
+//    @DisplayName("displayChores > When the list is not empty > Display expected output")
+//    void displayChoresWhenTheListIsNotEmptyDisplayExpectedOutput(){
+//        service.getChores().add(new Chore("Chore #01", Boolean.TRUE, LocalDate.now()));
+//        service.getChores().add(new Chore("Chore #02", Boolean.FALSE, LocalDate.now().plusDays(6) ));
+//
+//        assertDoesNotThrow(() -> service.displayChores());
+//
+//        String expectedOutput = "Descrição: \"Chore #01\" Deadline: 4/10/2023 Status: Completa\n" +
+//                "Descrição: \"Chore #02\" Deadline: 10/10/2023 Status: Incompleta\n";
+//
+//    }
 
 }
