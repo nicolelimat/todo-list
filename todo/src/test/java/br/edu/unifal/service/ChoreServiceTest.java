@@ -6,10 +6,7 @@ import br.edu.unifal.excepition.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.w3c.dom.ls.LSOutput;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -247,7 +244,6 @@ public class ChoreServiceTest {
                 () -> assertEquals("Chore #01", response.get(0).getDescription()),
                 () -> assertEquals(Boolean.FALSE, response.get(0).getIsCompleted())
         );
-
     }
 
     @Test
@@ -288,5 +284,154 @@ public class ChoreServiceTest {
 //                "Descrição: \"Chore #02\" Deadline: 10/10/2023 Status: Incompleta\n";
 //
 //    }
+
+    @Test
+    @DisplayName("#editChore > When the list is empty > Throw an Exception")
+    void editChoreWhenTheListIsEmptyThrowAnException(){
+        assertThrows(EmptyChoreListException.class, () -> service.editChore("Chore to be edited", LocalDate.now(), "New description", LocalDate.now()));
+    }
+
+    @Test
+    @DisplayName("#editChore > When the chore doesn't exist > Throw an Exception")
+    void editChoreWhenTheChoreDoesNotExistThrowAnException(){
+        service.getChores().add(new Chore("I exist!", Boolean.FALSE, LocalDate.now()));
+        assertThrows(ChoreNotFoundException.class, () -> service.editChore("I don't exist :(", LocalDate.now(), "New description", LocalDate.now()));
+    }
+
+    @Test
+    @DisplayName("#editChore > When new description is invalid > Throw an Exception")
+    void editChoreWhenNewDescriptionIsInvalidThrowAnException(){
+        service.getChores().add(new Chore("Chore # 01", Boolean.FALSE, LocalDate.now()));
+        assertAll(
+                () -> assertThrows(InvalidDescriptionException.class,
+                        () -> service.editChore("Chore # 01", LocalDate.now(), null, null)),
+                () -> assertThrows(InvalidDescriptionException.class,
+                        () -> service.editChore("Chore # 01", LocalDate.now(),"", null)),
+                () -> assertThrows(InvalidDescriptionException.class,
+                        () -> service.editChore("Chore # 01", LocalDate.now(), null, LocalDate.now().plusDays(1))),
+                () -> assertThrows(InvalidDescriptionException.class,
+                        () -> service.editChore("Chore # 01", LocalDate.now(), "", LocalDate.now().plusDays(1))),
+                () -> assertThrows(InvalidDescriptionException.class,
+                        () -> service.editChore("Chore # 01", LocalDate.now(), null, LocalDate.now().minusDays(1))),
+                () -> assertThrows(InvalidDescriptionException.class,
+                        () -> service.editChore("Chore # 01", LocalDate.now(), "", LocalDate.now().minusDays(1)))
+        );
+    }
+
+    @Test
+    @DisplayName("#editChore > When new deadline is invalid > Throw an Exception")
+    void editChoreWhenNewDeadlineIsInvalidThrowAnException(){
+        service.getChores().add(new Chore("Description", Boolean.FALSE, LocalDate.now()));
+        assertAll(
+                () -> assertThrows(InvalidDeadlineException.class,
+                        () -> service.editChore("Description", LocalDate.now(),"Description", null)),
+                () -> assertThrows(InvalidDeadlineException.class,
+                        () -> service.editChore("Description", LocalDate.now(),"Description", LocalDate.now().minusDays(1)))
+        );
+    }
+
+    @Test
+    @DisplayName("#editChore > When the new chore is equal to an existing chore > Throw an Exception")
+    void editChoreWhenTheNewChoreIsEqualToAnExistingChore(){
+        service.getChores().add(new Chore("Chore #01", Boolean.FALSE, LocalDate.now()));
+        service.getChores().add(new Chore("Chore #02", Boolean.FALSE, LocalDate.now().plusDays(2)));
+        assertThrows(DuplicatedChoreException.class,
+                () -> service.editChore("Chore #02", LocalDate.now().plusDays(2),"Chore #01",  LocalDate.now()));
+    }
+
+    @Test
+    @DisplayName("#editChore > When trying to edit the status > Nothing happens")
+    void editChoreWhenTryingToEditTheStatusNothingHappens(){
+        service.getChores().add(new Chore("Chore #01", Boolean.FALSE, LocalDate.now()));
+        assertFalse(service.getChores().get(0).getIsCompleted());
+
+        assertDoesNotThrow( () -> service.editChore("Chore #01", LocalDate.now(), "Chore #01", LocalDate.now()));
+        assertFalse(service.getChores().get(0).getIsCompleted());
+
+        service.getChores().add(new Chore("Chore #02", Boolean.TRUE, LocalDate.now()));
+        assertTrue(service.getChores().get(1).getIsCompleted());
+
+        assertDoesNotThrow( () -> service.editChore("Chore #02", LocalDate.now(), "Chore #02", LocalDate.now()));
+        assertTrue(service.getChores().get(1).getIsCompleted());
+    }
+
+    @Test
+    @DisplayName("#editChore > When editing the description > Edit the description")
+    void editChoreWhenEditingTheDescriptionEditTheDescription(){
+        service.getChores().add(new Chore("Old description", Boolean.FALSE, LocalDate.now()));
+        assertDoesNotThrow( () -> service.editChore("Old description", LocalDate.now(), "New description", LocalDate.now()));
+
+        assertAll(
+                () -> assertEquals("New description", service.getChores().get(0).getDescription()),
+                () -> assertEquals(LocalDate.now(), service.getChores().get(0).getDeadline())
+        );
+    }
+
+    @Test
+    @DisplayName("#editChore > When editing the deadline > Edit the deadline")
+    void editChoreWhenEditingTheDeadlineEditTheDeadline(){
+        service.getChores().add(new Chore("Old description", Boolean.FALSE, LocalDate.now()));
+        assertDoesNotThrow( () -> service.editChore("Old description", LocalDate.now(), "Old description", LocalDate.now().plusDays(5)));
+
+        assertAll(
+                () -> assertEquals(LocalDate.now().plusDays(5), service.getChores().get(0).getDeadline()),
+                () -> assertEquals("Old description", service.getChores().get(0).getDescription())
+        );
+    }
+
+    @Test
+    @DisplayName("#editChore > When editing the deadline and the description > Edit the deadline and description")
+    void editChoreWhenEditingTheDeadlineAndTheDescriptionEditTheDeadlineAndDescription(){
+        service.getChores().add(new Chore("Old description", Boolean.FALSE, LocalDate.now()));
+        assertDoesNotThrow( () -> service.editChore("Old description", LocalDate.now(), "New description", LocalDate.now().plusDays(5)));
+
+        assertAll(
+                () -> assertEquals(LocalDate.now().plusDays(5), service.getChores().get(0).getDeadline()),
+                () -> assertEquals("New description", service.getChores().get(0).getDescription())
+        );
+    }
+
+    @Test
+    @DisplayName("#editChore > When editing more than one chore > Edit the chores")
+    void editChoreWhenChoreEditedUpdateChoreInTheList(){
+        service.getChores().add(new Chore("Old description #01", Boolean.FALSE, LocalDate.now()));
+        service.getChores().add(new Chore("Old description #02", Boolean.FALSE, LocalDate.now().plusDays(1)));
+        service.getChores().add(new Chore("Old description #03", Boolean.FALSE, LocalDate.now().plusDays(2)));
+
+        assertDoesNotThrow( () -> service.editChore("Old description #01", LocalDate.now(), "New description", LocalDate.now().plusDays(6)));
+        assertDoesNotThrow( () -> service.editChore("Old description #02", LocalDate.now().plusDays(1), "Old description #02", LocalDate.now().plusDays(5)));
+        assertDoesNotThrow( () -> service.editChore("Old description #03", LocalDate.now().plusDays(2), "New description", LocalDate.now().plusDays(2)));
+
+        assertAll(
+                () -> assertEquals(LocalDate.now().plusDays(6), service.getChores().get(0).getDeadline()),
+                () -> assertEquals("New description", service.getChores().get(0).getDescription()),
+                () -> assertEquals(3, service.getChores().size()),
+
+                () -> assertEquals(LocalDate.now().plusDays(5), service.getChores().get(1).getDeadline()),
+                () -> assertEquals("Old description #02", service.getChores().get(1).getDescription()),
+                () -> assertEquals(3, service.getChores().size()),
+
+                () -> assertEquals(LocalDate.now().plusDays(2), service.getChores().get(2).getDeadline()),
+                () -> assertEquals("New description", service.getChores().get(2).getDescription()),
+                () -> assertEquals(3, service.getChores().size())
+        );
+
+    }
+
+    @Test
+    @DisplayName("#editChore > When description and deadline are not altered > Chore remains unchanged")
+    void editChoreWhenDescriptionAndDeadlineNotAlteredChoreRemainsUnchanged(){
+        service.getChores().add(new Chore("Description", Boolean.FALSE, LocalDate.now()));
+        assertEquals(Boolean.FALSE, service.getChores().get(0).getIsCompleted());
+        assertEquals("Description", service.getChores().get(0).getDescription());
+        assertEquals(LocalDate.now(), service.getChores().get(0).getDeadline());
+
+        assertDoesNotThrow( () -> service.editChore("Description", LocalDate.now(), "Description", LocalDate.now()));
+        assertEquals(Boolean.FALSE, service.getChores().get(0).getIsCompleted());
+        assertEquals("Description", service.getChores().get(0).getDescription());
+        assertEquals(LocalDate.now(), service.getChores().get(0).getDeadline());
+    }
+
+
 
 }

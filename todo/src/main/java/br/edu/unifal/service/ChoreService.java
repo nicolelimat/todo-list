@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -153,7 +154,13 @@ public class ChoreService {
                 return this.chores;
         }
     }
+
     private final Predicate<List<Chore>> isChoreListEmpty = choreList -> choreList.isEmpty();
+
+    private final BiPredicate<String, LocalDate> isChoreExist = (description, deadline) -> this.chores.stream().anyMatch(choreFound ->
+            choreFound.getDescription().equals(description) &&
+            choreFound.getDeadline().equals(deadline));
+
     public void displayChores (){
         if (isChoreListEmpty.test(this.chores)){
             throw new EmptyChoreListException("Unable to display chores of an empty list");
@@ -166,6 +173,39 @@ public class ChoreService {
                         (chore.getIsCompleted() ? "Completa" : "Incompleta"))
         );
     }
+
+    public void editChore(String oldDescription, LocalDate oldDeadline, String newDescription, LocalDate newDeadline) {
+        if(isChoreListEmpty.test(this.chores)){
+            throw new EmptyChoreListException("Unable to edit a chore from an empty list");
+        }
+
+        if(!(isChoreExist.test(oldDescription, oldDeadline))){
+            throw new ChoreNotFoundException("Unable to edit a chore that does not exist");
+        }
+
+        if((isChoreExist.test(newDescription, newDeadline) && oldDeadline != newDeadline && oldDescription != newDescription)){
+            throw new DuplicatedChoreException("Unable to edit a chore to a chore that already exists");
+        }
+
+        if(Objects.isNull(newDescription) || newDescription.isEmpty()){
+            throw new InvalidDescriptionException("Unable to edit a chore to a description that is null or empty");
+        }
+
+        if(Objects.isNull(newDeadline) || newDeadline.isBefore(LocalDate.now())){
+            throw new InvalidDeadlineException("Unable to edit a chore to a deadline that is null or before the current date");
+        }
+
+        this.chores.stream().map(chore -> {
+            if(!chore.getDescription().equals(oldDescription) && !chore.getDeadline().isEqual(oldDeadline)){
+                return chore;
+            }
+            chore.setDeadline(newDeadline);
+            chore.setDescription(newDescription);
+            return chore;
+        }).collect(Collectors.toList());
+
+    }
+
 }
 
 
