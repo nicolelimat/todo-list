@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -153,7 +154,13 @@ public class ChoreService {
                 return this.chores;
         }
     }
+
     private final Predicate<List<Chore>> isChoreListEmpty = choreList -> choreList.isEmpty();
+
+    private final BiPredicate<String, LocalDate> isChoreExist = (description, deadline) -> this.chores.stream().anyMatch(choreFound ->
+            choreFound.getDescription().equals(description) &&
+            choreFound.getDeadline().equals(deadline));
+
     public void displayChores (){
         if (isChoreListEmpty.test(this.chores)){
             throw new EmptyChoreListException("Unable to display chores of an empty list");
@@ -167,8 +174,8 @@ public class ChoreService {
         );
     }
 
-    public Chore editChore(String oldDescription, LocalDate oldDeadline, String newDescription, LocalDate newDeadline){
-        return null;
+    public void editChore(String oldDescription, LocalDate oldDeadline, String newDescription, LocalDate newDeadline) {
+
     }
 
 }
