@@ -154,7 +154,18 @@ public class ChoreService {
         }
     }
     private final Predicate<List<Chore>> isChoreListEmpty = choreList -> choreList.isEmpty();
-
+    public void displayChores (){
+        if (isChoreListEmpty.test(this.chores)){
+            throw new EmptyChoreListException("Unable to display chores of an empty list");
+        }
+        this.chores.stream().forEach(chore ->
+                System.out.println("Descrição: \"" + chore.getDescription() + "\"" + " Deadline: " +
+                        chore.getDeadline().getDayOfMonth() + "/" +
+                        chore.getDeadline().getMonthValue() +"/"+
+                        chore.getDeadline().getYear() + " Status: " +
+                        (chore.getIsCompleted() ? "Completa" : "Incompleta"))
+        );
+    }
 }
 
 
