@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -432,6 +433,44 @@ public class ChoreServiceTest {
         assertEquals(LocalDate.now(), service.getChores().get(0).getDeadline());
     }
 
+    @Test
+    @DisplayName("#readFile > When file is empty > Throw an exception")
+    void readFileWhenFileIsEmptyThrowAnException(){
+        File emptyFile = new File("./src/test/resources/empty.json");
+        assertThrows(FileIsEmptyException.class,
+                () -> service.readFile(emptyFile));
+    }
+
+    @Test
+    @DisplayName("#readFile > When read the file > When the deadline is invalid > Throw an exception")
+    void readFileWhenDeadlineIsInvalidThrowAnException(){
+        File invalidDeadlineFile = new File("./src/test/resources/invalid_deadline.json");
+        assertThrows(InvalidDeadlineException.class,
+                () -> service.readFile(invalidDeadlineFile));
+    }
+
+    @Test
+    @DisplayName("#readFile > When read the file > When the description is invalid > Throw an exception")
+    void readFileWhenDescriptionIsInvalidThrowAnException(){
+        File invalidDescriptionFile = new File("./src/test/resources/invalid_description.json");
+        assertThrows(InvalidDescriptionException.class,
+                () -> service.readFile(invalidDescriptionFile));
+    }
+
+    @Test
+    @DisplayName("#readFile > When read the file > When duplicated chores > Throw an exception")
+    void readFileWhenDuplicatedChoresThrowAnException(){
+        File duplicatedChoresFile = new File("./src/test/resources/duplicated_chores.json");
+        assertThrows(DuplicatedChoreException.class,
+                () -> service.readFile(duplicatedChoresFile));
+    }
+
+    @Test
+    @DisplayName("#readFile > When read the file > Read the file and add to chores")
+    void readFileAndAddToChores(){
+        File file = new File("./src/test/resources/chores.json");
+        assertDoesNotThrow(() -> service.readFile(file));
+    }
 
 
 }
