@@ -215,9 +215,28 @@ public class ChoreService {
      * Method to read a JSON file into a list of chores
      * @param file The JSON file to be read
      * @throws FileIsEmptyException When the JSON file is empty
+     * @throws RuntimeException When error while reading the JSON file
      */
     public void readFile(File file) {
+        if (file.length() == 0){
+            throw new FileIsEmptyException("Unable to read an empty JSON file");
+        }
 
+        List<Chore> choresJson;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            choresJson = Arrays.asList(mapper.readValue(file, Chore[].class));
+        } catch (IOException e) {
+            throw new RuntimeException("Error while reading the JSON file: " + e.getMessage(), e);
+        }
+
+        choresJson.stream().forEach(chore -> {
+            addChore(chore.getDescription(),chore.getDeadline());
+            if(chore.getIsCompleted()){
+                toggleChore(chore.getDescription(),chore.getDeadline());
+            }
+        });
     }
 }
 
