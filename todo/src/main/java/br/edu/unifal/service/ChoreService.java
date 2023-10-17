@@ -3,9 +3,14 @@ package br.edu.unifal.service;
 import br.edu.unifal.domain.Chore;
 import br.edu.unifal.enumerator.ChoreFilter;
 import br.edu.unifal.excepition.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiPredicate;
@@ -206,6 +211,14 @@ public class ChoreService {
 
     }
 
+    /**
+     * Method to read a JSON file into a list of chores
+     * @param file The JSON file to be read
+     * @throws FileIsEmptyException When the JSON file is empty
+     */
+    public void readFile(File file) {
+
+    }
 }
 
 
