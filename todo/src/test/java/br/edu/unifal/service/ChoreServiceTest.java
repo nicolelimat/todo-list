@@ -14,7 +14,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ChoreServiceTest {
-
     private ChoreService service;
 
     @BeforeEach
@@ -23,18 +22,18 @@ public class ChoreServiceTest {
     }
 
     @Test
-    @DisplayName("#addChore > When the description is invalid > Throw an exception")
+    @DisplayName("#addChore > When the description is invalid > Throw an Exception")
     void addChoreWhenTheDescriptionIsInvalidThrowAnException() {
         assertAll(
-                () -> assertThrows(InvalidDescriptionException.class, // garante que chama a exceção
+                () -> assertThrows(InvalidDescriptionException.class,
                         () -> service.addChore(null, null)),
                 () -> assertThrows(InvalidDescriptionException.class,
                         () -> service.addChore("", null)),
-                () -> assertThrows(InvalidDescriptionException.class, // garante que chama a exceção
+                () -> assertThrows(InvalidDescriptionException.class,
                         () -> service.addChore(null, LocalDate.now().plusDays(1))),
                 () -> assertThrows(InvalidDescriptionException.class,
                         () -> service.addChore("", LocalDate.now().plusDays(1))),
-                () -> assertThrows(InvalidDescriptionException.class, // garante que chama a exceção
+                () -> assertThrows(InvalidDescriptionException.class,
                         () -> service.addChore(null, LocalDate.now().minusDays(1))),
                 () -> assertThrows(InvalidDescriptionException.class,
                         () -> service.addChore("", LocalDate.now().minusDays(1)))
@@ -42,7 +41,7 @@ public class ChoreServiceTest {
     }
 
     @Test
-    @DisplayName("#addChore > When the deadline is invalid > Throw an exception")
+    @DisplayName("#addChore > When the deadline is invalid > Throw an Exception")
     void addChoreWhenTheDeadlineIsInvalidThrowAnException() {
         assertAll(
                 () -> assertThrows(InvalidDeadlineException.class,
@@ -53,19 +52,12 @@ public class ChoreServiceTest {
     }
 
     @Test
-    @DisplayName("#addChore > When the chore already exists > Throw an exception")
+    @DisplayName("#addChore > When the chore already exists > Throw an Exception")
     void addChoreWhenTheChoreAlreadyExistsThrowAnException() {
         service.addChore("Description", LocalDate.now());
         assertThrows(DuplicatedChoreException.class,
                 () -> service.addChore("Description", LocalDate.now()));
     }
-
-//    @Test
-//    @DisplayName("#addChore > When the chore is successfully added > Return true")
-//    void addChoreWhenTheChoreIsSuccessfullyAddedReturnTrue() {
-//        Chore chore = service.addChore("Description", LocalDate.now());
-//        assertTrue(service.isChoreOnList(chore));
-//    }
 
     @Test
     @DisplayName("#addChore > When the chore's list is empty > When adding a new chore > Add the chore")
@@ -94,21 +86,8 @@ public class ChoreServiceTest {
         );
     }
 
-//    @Test
-//    @DisplayName("#addChore > When chores are different > Return true")
-//    void addChoreWhenChoresAreDifferentReturnTrue() {
-//        Chore chore1 = service.addChore("Description 1", LocalDate.now());
-//        Chore chore2 = service.addChore("Description 2", LocalDate.now());
-//
-//        assertAll(
-//                () -> assertTrue(service.isChoreOnList(chore1)),
-//                () -> assertTrue(service.isChoreOnList(chore2))
-//        );
-//
-//    }
-
     @Test
-    @DisplayName("#deleteChore > When the list is empty > Throw an exception")
+    @DisplayName("#deleteChore > When the list is empty > Throw an Exception")
     void deleteChoreWhenTheListIsEmptyThrowAnException() {
         assertThrows(EmptyChoreListException.class, () -> {
             service.deleteChore("Description", LocalDate.now());
@@ -116,7 +95,7 @@ public class ChoreServiceTest {
     }
 
     @Test
-    @DisplayName("#deleteChore > When the list is not empty > When the chore does not exist > Throw an exception")
+    @DisplayName("#deleteChore > When the list is not empty > When the chore does not exist > Throw an Exception")
     void deleteChoreWhenTheListIsNotEmptyWhenTheChoreDoesNotExistThrowAnException() {
         service.addChore("Description", LocalDate.now());
         assertThrows(ChoreNotFoundException.class, () -> {
@@ -146,7 +125,7 @@ public class ChoreServiceTest {
     }
 
     @Test
-    @DisplayName("#toggleChore > When the chore doesn't exist > Throw an exception")
+    @DisplayName("#toggleChore > When the chore doesn't exist > Throw an Exception")
     void toggleChoreWhenTheChoreDoesNotExistThrowAnException() {
         assertThrows(ChoreNotFoundException.class, () -> service.toggleChore("Chore #01", LocalDate.now()));
     }
@@ -178,7 +157,7 @@ public class ChoreServiceTest {
     }
 
     @Test
-    @DisplayName("#toggleChore > When the deadline is invalid > When the status is completed > Throw and exception")
+    @DisplayName("#toggleChore > When the deadline is invalid > When the status is completed > Throw an Exception")
     void toggleChoreWhenTheDeadlineIsInvalidWhenTheStatusIsCompletedToggleTheChore() {
         service.getChores().add(new Chore("Chore #01", Boolean.TRUE, LocalDate.now().minusDays(1)));
         assertThrows(ToggleChoreWithInvalidDeadlineException.class,
@@ -248,43 +227,30 @@ public class ChoreServiceTest {
     }
 
     @Test
-    @DisplayName("#displayChores > When the list is empty > Throw an exception")
-    void displayChoresWhenTheListEmptyThrowAnException(){
-        assertThrows(EmptyChoreListException.class, () -> service.displayChores());
+    @DisplayName("#printChores > When the list is empty > Throw an Exception")
+    void printChoresWhenTheListEmptyThrowAnException(){
+        assertThrows(EmptyChoreListException.class, () -> service.printChores());
     }
 
     @Test
-    @DisplayName("#displayChores > When the list is not empty > When the status is TRUE > Display the chores")
-    void displayChoresWhenTheListIsNotEmptyWhenTheStatusIsTrueDisplayChores(){
+    @DisplayName("#printChores > When the list is not empty > When the status is TRUE > Print the chores")
+    void printChoresWhenTheListIsNotEmptyWhenTheStatusIsTruePrintChores(){
         service.getChores().add(new Chore("Chore #01", Boolean.TRUE, LocalDate.now().minusDays(5)));
         service.getChores().add(new Chore("Chore #02", Boolean.TRUE, LocalDate.now().plusDays(9) ));
         service.getChores().add(new Chore("Chore #03", Boolean.TRUE, LocalDate.now() ));
 
-        assertDoesNotThrow(() -> service.displayChores());
+        assertDoesNotThrow(() -> service.printChores());
     }
 
     @Test
-    @DisplayName("#displayChores > When the list is not empty > When the status is FALSE > Display the chores")
-    void displayChoresWhenTheListIsNotEmptyWhenTheStatusIsFalseDisplayChores(){
+    @DisplayName("#printChores > When the list is not empty > When the status is FALSE > Print the chores")
+    void printChoresWhenTheListIsNotEmptyWhenTheStatusIsFalsePrintChores(){
         service.getChores().add(new Chore("Chore #01", Boolean.FALSE, LocalDate.now().minusDays(5)));
         service.getChores().add(new Chore("Chore #02", Boolean.FALSE, LocalDate.now().plusDays(9) ));
         service.getChores().add(new Chore("Chore #03", Boolean.FALSE, LocalDate.now() ));
 
-        assertDoesNotThrow(() -> service.displayChores());
+        assertDoesNotThrow(() -> service.printChores());
     }
-
-//    @Test
-//    @DisplayName("displayChores > When the list is not empty > Display expected output")
-//    void displayChoresWhenTheListIsNotEmptyDisplayExpectedOutput(){
-//        service.getChores().add(new Chore("Chore #01", Boolean.TRUE, LocalDate.now()));
-//        service.getChores().add(new Chore("Chore #02", Boolean.FALSE, LocalDate.now().plusDays(6) ));
-//
-//        assertDoesNotThrow(() -> service.displayChores());
-//
-//        String expectedOutput = "Descrição: \"Chore #01\" Deadline: 4/10/2023 Status: Completa\n" +
-//                "Descrição: \"Chore #02\" Deadline: 10/10/2023 Status: Incompleta\n";
-//
-//    }
 
     @Test
     @DisplayName("#editChore > When the list is empty > Throw an Exception")
@@ -434,7 +400,7 @@ public class ChoreServiceTest {
     }
 
     @Test
-    @DisplayName("#readFile > When file is empty > Throw an exception")
+    @DisplayName("#readFile > When file is empty > Throw an Exception")
     void readFileWhenFileIsEmptyThrowAnException(){
         File emptyFile = new File("./src/test/resources/empty.json");
         assertThrows(FileIsEmptyException.class,
@@ -442,7 +408,7 @@ public class ChoreServiceTest {
     }
 
     @Test
-    @DisplayName("#readFile > When read the file > When the deadline is invalid > Throw an exception")
+    @DisplayName("#readFile > When read the file > When the deadline is invalid > Throw an Exception")
     void readFileWhenDeadlineIsInvalidThrowAnException(){
         File invalidDeadlineFile = new File("./src/test/resources/invalid_deadline.json");
         assertThrows(InvalidDeadlineException.class,
@@ -450,7 +416,7 @@ public class ChoreServiceTest {
     }
 
     @Test
-    @DisplayName("#readFile > When read the file > When the description is invalid > Throw an exception")
+    @DisplayName("#readFile > When read the file > When the description is invalid > Throw an Exception")
     void readFileWhenDescriptionIsInvalidThrowAnException(){
         File invalidDescriptionFile = new File("./src/test/resources/invalid_description.json");
         assertThrows(InvalidDescriptionException.class,
@@ -458,7 +424,7 @@ public class ChoreServiceTest {
     }
 
     @Test
-    @DisplayName("#readFile > When read the file > When duplicated chores > Throw an exception")
+    @DisplayName("#readFile > When read the file > When duplicated chores > Throw an Exception")
     void readFileWhenDuplicatedChoresThrowAnException(){
         File duplicatedChoresFile = new File("./src/test/resources/duplicated_chores.json");
         assertThrows(DuplicatedChoreException.class,
@@ -471,6 +437,5 @@ public class ChoreServiceTest {
         File file = new File("./src/test/resources/chores.json");
         assertDoesNotThrow(() -> service.readFile(file));
     }
-
 
 }
