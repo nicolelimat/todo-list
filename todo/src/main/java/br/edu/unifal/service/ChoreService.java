@@ -3,6 +3,8 @@ package br.edu.unifal.service;
 import br.edu.unifal.domain.Chore;
 import br.edu.unifal.enumerator.ChoreFilter;
 import br.edu.unifal.excepition.*;
+import br.edu.unifal.repository.ChoreRepository;
+import br.edu.unifal.repository.impl.FileChoreRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
@@ -19,8 +21,16 @@ import java.util.stream.Collectors;
 
 public class ChoreService {
     private List<Chore> chores;
+    private ChoreRepository repository;
+
+    public ChoreService(ChoreRepository repository){
+        chores = new ArrayList<>();
+        this.repository = repository;
+    }
+
     public ChoreService(){
         chores = new ArrayList<>();
+        repository = new FileChoreRepository();
     }
 
     /**
@@ -170,31 +180,18 @@ public class ChoreService {
     }
 
     /**
-     * Method to read a JSON file into a list of chores
-     * @param file The JSON file to be read
-     * @throws FileIsEmptyException When the JSON file is empty
-     * @throws RuntimeException When error while reading the JSON file
      */
-    public void readFile(File file) {
-        if (file.length() == 0){
-            throw new FileIsEmptyException("Unable to read an empty JSON file");
-        }
+    public void loadChores() {
+        this.chores = repository.load();
+    }
 
-        List<Chore> choresJson;
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.registerModule(new JavaTimeModule());
-            choresJson = Arrays.asList(mapper.readValue(file, Chore[].class));
-        } catch (IOException e) {
-            throw new RuntimeException("Error while reading the JSON file: " + e.getMessage(), e);
-        }
-
-        choresJson.stream().forEach(chore -> {
-            addChore(chore.getDescription(),chore.getDeadline());
-            if(chore.getIsCompleted()){
-                toggleChore(chore.getDescription(),chore.getDeadline());
-            }
-        });
+    /**
+     * Save the chores into the file
+     * @return TRUE, if the saved was completed and <br/>
+     *         FALSE, if the save fails
+     */
+    public Boolean saveChores(){
+        return repository.save(this.chores);
     }
 
     private final Predicate<List<Chore>> isChoreListEmpty = choreList -> choreList.isEmpty();
