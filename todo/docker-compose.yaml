@@ -1,0 +1,19 @@
+version: '3.3'
+services:
+  db:
+    image: 'mysql:latest'
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'db'
+      MYSQL_USER: 'nics'
+      MYSQL_PASSWORD: 'senha'
+      MYSQL_ROOT_PASSWORD: 'senhaRoot'
+    ports:
+      - '3307:3306'
+    expose:
+      - '3306'
+    volumes:
+      - my-db:/var/lib/mysql
+volumes:
+  my-db:
+

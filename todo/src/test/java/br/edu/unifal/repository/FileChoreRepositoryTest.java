@@ -38,7 +38,7 @@ public class FileChoreRepositoryTest {
     @DisplayName("#load > When the file is found > When the content is empty > Return empty list")
     void loadWhenTheFileIsFoundWhenTheContentIsEmptyReturnEmptyList() throws IOException {
         Mockito.when(
-                mapper.readValue(new File("./src/test/resources/chores.json"), Chore[].class) // o que tem o mock em cima
+                mapper.readValue(new File("chores.json"), Chore[].class) // o que tem o mock em cima
         ).thenThrow(MismatchedInputException.class);
         List<Chore> response = repository.load();
 
@@ -49,7 +49,7 @@ public class FileChoreRepositoryTest {
     @DisplayName("#load > When the file is not found (or path is invalid) > Return empty list")
     void loadWhenTheFileIsNotFoundOrPathIsInvalidReturnEmptyList() throws IOException {
         Mockito.when(
-                mapper.readValue(new File("./src/test/resources/chores.json"), Chore[].class)
+                mapper.readValue(new File("chores.json"), Chore[].class)
         ).thenThrow(FileNotFoundException.class);
 
         List<Chore> response = repository.load();
@@ -60,7 +60,7 @@ public class FileChoreRepositoryTest {
     @DisplayName("#load > When the file is loaded > Return a chore's list")
     void loadWhenTheFileIsLoadedReturnAChoresList() throws IOException {
         Mockito.when(
-                mapper.readValue(new File("./src/test/resources/chores.json"), Chore[].class)
+                mapper.readValue(new File("chores.json"), Chore[].class)
         ).thenReturn(new Chore[] {
                 new Chore("First Chore", Boolean.FALSE, LocalDate.now()),
                 new Chore("Second Chore", Boolean.TRUE, LocalDate.now().minusDays(5))
