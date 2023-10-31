@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -445,14 +446,15 @@ public class ChoreServiceTest {
     @Test
     @DisplayName("#saveChores > When the save is completed > Return True")
     void saveChoresWhenTheSaveIsCompletedReturnTrue(){
-
+        Mockito.when(repository.save(service.getChores())).thenReturn(true);
+        assertTrue(service.saveChores());
     }
 
     @Test
     @DisplayName("#saveChores > When the save fails > Return False")
     void saveChoresWhenTheSaveFailsReturnFalse(){
-
+        Mockito.when(repository.save(service.getChores())).thenReturn(false);
+        assertFalse(service.saveChores());
     }
-
 
 }
