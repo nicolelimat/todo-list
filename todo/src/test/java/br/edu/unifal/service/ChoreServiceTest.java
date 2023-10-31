@@ -442,5 +442,17 @@ public class ChoreServiceTest {
         List<Chore> loadChores = service.getChores();
         assertTrue(loadChores.isEmpty());
     }
+    @Test
+    @DisplayName("#saveChores > When the save is completed > Return True")
+    void saveChoresWhenTheSaveIsCompletedReturnTrue(){
+
+    }
+
+    @Test
+    @DisplayName("#saveChores > When the save fails > Return False")
+    void saveChoresWhenTheSaveFailsReturnFalse(){
+
+    }
+
 
 }

@@ -40,7 +40,7 @@ public class FileChoreRepository implements ChoreRepository {
         try {
             mapper.writeValue(new File("chores.json"), chores);
             return true;
-        } catch (IOException e) {
+        } catch (IOException exception) {
             System.out.println("ERROR: Unable to write the chores on the file.");
         }
         return false;
