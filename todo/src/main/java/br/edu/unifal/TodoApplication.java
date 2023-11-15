@@ -1,5 +1,6 @@
 package br.edu.unifal;
 
+import br.edu.unifal.domain.Chore;
 import br.edu.unifal.repository.ChoreRepository;
 import br.edu.unifal.repository.impl.FileChoreRepository;
 import br.edu.unifal.repository.impl.MySQLChoreRepository;
@@ -20,7 +21,12 @@ public class TodoApplication {
         System.out.println("Tamanho da lista de chores: " + service.getChores().size());
 //        service.saveChores();
         service.printChores();
-        System.out.println("\nUpdate chore: " + service.updateChore(service.getChores().get(0)));
+        Chore updatedChore = service.getChores().get(service.getChores().size()-1);
+        updatedChore.setDescription("Updated description");
+        updatedChore.setDeadline(LocalDate.now());
+        System.out.println("\nUpdate chore: " + service.updateChore(updatedChore));
+
+        service.printChores();
 
     }
 }
