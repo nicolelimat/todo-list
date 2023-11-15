@@ -4,7 +4,6 @@ import br.edu.unifal.domain.Chore;
 import br.edu.unifal.repository.impl.FileChoreRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -84,7 +83,7 @@ public class FileChoreRepositoryTest {
                 .when(mapper).writeValue(Mockito.any(File.class), Mockito.any());
 
         List<Chore> chores = new ArrayList<>();
-        boolean response = repository.save(chores);
+        boolean response = repository.saveAll(chores);
 
         assertFalse(response);
     }
@@ -96,7 +95,7 @@ public class FileChoreRepositoryTest {
         Mockito.doNothing().when(mapper).writeValue(Mockito.any(File.class), Mockito.any());
 
         List<Chore> chores = new ArrayList<>();
-        boolean response = repository.save(chores);
+        boolean response = repository.saveAll(chores);
 
         assertTrue(response);
     }

@@ -13,7 +13,9 @@ public class TodoApplication {
         ChoreRepository repository = new MySQLChoreRepository();
         ChoreService service = new ChoreService(repository); // injetar dependencia
         service.loadChores();
-        service.saveChores();
+//        service.addChore("Testing write on databse feature", LocalDate.now());
+//        service.addChore("Feriado", LocalDate.now().plusDays(1));
+//        service.saveChores();
 ////        service.addChore("Testing ", LocalDate.now());
         System.out.println("Tamanho da lista de chores: " + service.getChores().size());
 //        service.saveChores();

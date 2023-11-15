@@ -5,14 +5,9 @@ import br.edu.unifal.enumerator.ChoreFilter;
 import br.edu.unifal.excepition.*;
 import br.edu.unifal.repository.ChoreRepository;
 import br.edu.unifal.repository.impl.FileChoreRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-import java.io.File;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiPredicate;
@@ -56,6 +51,8 @@ public class ChoreService {
         }
 
         Chore chore = new Chore(description, Boolean.FALSE, deadline);
+
+        repository.save(chore);
         chores.add(chore);
         return chore;
     }
@@ -133,7 +130,9 @@ public class ChoreService {
             throw new EmptyChoreListException("Unable to display chores of an empty list");
         }
         this.chores.stream().forEach(chore ->
-                System.out.println("Descrição: \"" + chore.getDescription() + "\"" + " Deadline: " +
+                System.out.println(
+                        "ID: " + chore.getId() +
+                        " - Descrição: \"" + chore.getDescription() + "\"" + " Deadline: " +
                         chore.getDeadline().getDayOfMonth() + "/" +
                         chore.getDeadline().getMonthValue() +"/"+
                         chore.getDeadline().getYear() + " Status: " +
@@ -191,7 +190,7 @@ public class ChoreService {
      *         FALSE, if the save fails
      */
     public Boolean saveChores(){
-        return repository.save(this.chores);
+        return repository.saveAll(this.chores);
     }
 
     private final Predicate<List<Chore>> isChoreListEmpty = choreList -> choreList.isEmpty();

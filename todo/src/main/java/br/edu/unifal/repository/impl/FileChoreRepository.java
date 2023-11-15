@@ -36,7 +36,7 @@ public class FileChoreRepository implements ChoreRepository {
     }
 
     @Override
-    public boolean save (List<Chore> chores){
+    public boolean saveAll(List<Chore> chores){
         try {
             mapper.writeValue(new File("chores.json"), chores);
             return true;
@@ -44,5 +44,16 @@ public class FileChoreRepository implements ChoreRepository {
             System.out.println("ERROR: Unable to write the chores on the file.");
         }
         return false;
+    }
+
+    // TODO
+    @Override
+    public boolean save(Chore chore) {
+        throw new RuntimeException("Operation not supported yet.");
+    }
+
+    @Override
+    public boolean update(Chore chore){
+        throw new RuntimeException("Operation not supported yet.");
     }
 }
