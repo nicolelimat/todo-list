@@ -20,6 +20,7 @@ public class TodoApplication {
         System.out.println("Tamanho da lista de chores: " + service.getChores().size());
 //        service.saveChores();
         service.printChores();
+        System.out.println("\nUpdate chore: " + service.updateChore(service.getChores().get(0)));
 
     }
 }

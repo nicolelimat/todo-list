@@ -185,12 +185,24 @@ public class ChoreService {
     }
 
     /**
-     * Save the chores into the file
+     * Method to save the chores into the file
      * @return TRUE, if the saved was completed and <br/>
      *         FALSE, if the save fails
      */
     public Boolean saveChores(){
         return repository.saveAll(this.chores);
+    }
+
+    /**
+     * Method to update the chore
+     * @param chore
+     * @return
+     */
+    public Boolean updateChore(Chore chore){
+        if(Objects.isNull(chore)){
+            return Boolean.FALSE;
+        }
+        return repository.update(chore);
     }
 
     private final Predicate<List<Chore>> isChoreListEmpty = choreList -> choreList.isEmpty();

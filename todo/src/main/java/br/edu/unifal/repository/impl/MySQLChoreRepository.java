@@ -30,12 +30,6 @@ public class MySQLChoreRepository implements ChoreRepository {
     //       Eu uso o result set para capturar o resultado dessa consulta
     private ResultSet resultSet;
 
-
-    @Override
-    public boolean update(Chore chore){
-        return false;
-    }
-
     @Override
     public List<Chore> load() {
         if(!connectToMySQL()){
@@ -85,7 +79,7 @@ public class MySQLChoreRepository implements ChoreRepository {
             preparedStatement = connection.prepareStatement(
                     ChoreBook.INSERT_CHORE);
 
-            // Falando que os valores ? ? ? serão , nomeados, setados
+            // Falando que os valores ? ? ? serão nomeados, setados
             preparedStatement.setString(1, chore.getDescription());
             preparedStatement.setBoolean(2, chore.getIsCompleted());
             preparedStatement.setDate(3, Date.valueOf(chore.getDeadline()));
@@ -100,6 +94,31 @@ public class MySQLChoreRepository implements ChoreRepository {
         } catch (SQLException exception) {
             System.out.println("Error when inserting a new chore on database");
         } finally {
+            closeConnections();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean update(Chore chore){
+        if(!connectToMySQL()){
+            return Boolean.FALSE;
+        }
+        try {
+            preparedStatement = connection.prepareStatement(
+                    ChoreBook.UPDATE_CHORE);
+            preparedStatement.setString(1, chore.getDescription());
+            preparedStatement.setDate(2, Date.valueOf(chore.getDeadline()));
+            preparedStatement.setLong(3, chore.getId());
+
+            int affectedRows = preparedStatement.executeUpdate();
+            if (affectedRows > 0){
+                return Boolean.TRUE;
+            }
+            return Boolean.FALSE;
+        }catch (SQLException exception){
+            System.out.println(("Error when updating the chore on database"));
+        }finally {
             closeConnections();
         }
         return false;
